@@ -1,0 +1,29 @@
+VERSION ""
+
+NS_ :
+    NSDESC_
+    CM_
+    BADEF_
+    BA_
+    VAL_
+    BA_DEFDEF_
+    BO_TXBU_
+    VALTABLE_
+
+BS_:
+
+BU_: NodeA NodeB
+
+BO_ 256 SENSOR_DATA: 4 NodeA
+ SG_ temperature : 0|16@1- (0.1,0) [-40|125] "C" NodeB
+ SG_ alive_counter : 16|8@1+ (1,0) [0|15] "" NodeB
+ SG_ checksum : 24|8@1+ (1,0) [0|255] "" NodeB
+
+BO_ 512 CMD: 4 NodeB
+ SG_ target_val : 0|16@1+ (1,0) [0|1000] "" NodeA
+ SG_ enable : 16|1@1+ (1,0) [0|1] "" NodeA
+ SG_ checksum : 24|8@1+ (1,0) [0|255] "" NodeA
+
+BO_ 2047 HEARTBEAT: 2 NodeA
+ SG_ node_id : 0|8@1+ (1,0) [0|255] "" NodeB
+ SG_ alive_counter : 8|8@1+ (1,0) [0|15] "" NodeB
