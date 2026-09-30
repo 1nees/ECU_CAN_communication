@@ -16,4 +16,6 @@ int can_receive(can_frame_t *frame);
 
 void can_close(void);
 
+int can_receive_timeout(can_frame_t *frame, int timeout_ms);
+
 #endif

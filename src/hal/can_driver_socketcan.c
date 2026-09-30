@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <linux/can.h>
 #include <linux/can/raw.h>
+#include <poll.h>
 
 static int can_socket = -1;
 
@@ -99,4 +100,24 @@ void can_close(void){
 
     }
 
+}
+
+int can_receive_timeout(can_frame_t *frame, int timeout_ms) {
+    if (can_socket < 0) {
+        return -1;
+    }
+
+    struct pollfd pfd = { .fd = can_socket, .events = POLLIN};
+    int r = poll(&pfd, 1, timeout_ms);
+
+    if (r < 0) {
+        perror("poll");
+        return -1;
+    } 
+    
+    if(r == 0) {
+        return 1;
+    }
+
+    return can_receive(frame) == 0 ? 0 : -1;
 }
