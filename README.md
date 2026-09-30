@@ -48,15 +48,6 @@ src/
 
 The application and services layers only use the interface in `can_driver.h`. Running on a microcontroller would mean writing a new driver (for example `can_driver_stm32.c`) with the same functions. This port has **not** been implemented.
 
-## Requirements
-
-- Linux (tested on Ubuntu in a virtual machine)
-- `gcc`, `can-utils`, kernel module `vcan`
-
-```bash
-sudo apt install -y build-essential can-utils
-```
-
 ## Build and run
 
 Set up the virtual CAN interface (needed again after every reboot):
@@ -87,27 +78,3 @@ Signal packing test:
 ```bash
 ./build/signals_test
 ```
-
-## Tests and results
-
-### Signal test
-
-`signals_test` packs a sensor frame, unpacks it, then flips one bit and checks that the corrupted frame is rejected.
-
-```
-Bajtovi: EB 00 03 E8
-OK: temp=23.5 counter=3
-Pokvaren frejm je odbijen (checksum)
-```
-
-### Bus timing
-
-Captured with `candump -td vcan0`: `SENSOR_DATA` arrives about every 10 ms and `HEARTBEAT` about every 100 ms. Occasional single intervals of 6-14 ms or 22 ms come from the virtual machine's scheduler, but consecutive intervals add up to the nominal period because the sender sleeps until absolute times (`clock_nanosleep` with `TIMER_ABSTIME`), so the period does not drift.
-
-### Failure scenario (manual)
-
-| Scenario | Expected | Observed |
-|----------|----------|----------|
-| Stop Node A (Ctrl+C) | Node B prints `HEARTBEAT TIMEOUT` after about 300 ms, `CMD` becomes `00 00 00 00` | _fill in after testing_ |
-| Restart Node A | Node B prints `Node A alive -> NORMAL operation`, `CMD` carries data again | _fill in after testing_ |
-| Corrupted frame (checksum mismatch) | Frame dropped, counted as bad | _fill in after testing_ |
